@@ -28,7 +28,25 @@
 			}
 			return cookieValue;
 		}
-		const csrftoken = getToken('csrftoken');
+		var csrftoken = getToken('csrftoken');
+
+		function getCookie(name){
+			var cookieArr = document.cookie.split(";");
+			for(let i=0; i<cookieArr.length; i++){
+				var cookiePair = cookieArr[i].split("=");
+				if(name == cookiePair[0].trim()){
+					return decodeURIComponent(cookiePair[1]);
+				}
+			}
+			return null;
+		}
+		var cart = JSON.parse(getCookie('cart'))
+		if(cart == undefined){
+			cart = {}
+			console.log('Cart created!')
+			document.cookie = 'cart=' + JSON.stringify(cart) + ';domain=;path=/'
+		}
+		console.log('Cart: ', cart)
 	</script>
 
 </head>
@@ -48,7 +66,13 @@
 					<a class="nav-link" href="{% url 'store' %}">Store <span class="sr-only">(current)</span></a>
 			</ul>
 			<div class="form-inline my-2 my-lg-0">
-				<a href="#"class="btn btn-warning">Login</a>
+				<a href="#"class="btn btn-warning disabled">
+					{% if user.is_authenticated %}
+						Logout
+					{% else %}
+						Login
+					{% endif %}
+				</a>
 				
 				<a href="{% url 'cart' %}">
 				   <img  id="cart-icon" src="{% static 'images/cart.png' %}">
